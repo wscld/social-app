@@ -306,18 +306,19 @@ let FeedItem = ({
             style={[styles.meta, a.self_start]}
             accessibilityHint=""
             accessibilityLabel={a11yLabel}>
-            <TextLink
-              key={authors[0].href}
-              style={[pal.text, s.bold]}
-              href={authors[0].href}
-              text={forceLTR(firstAuthorName)}
-              disableMismatchWarning
-            />
+            <ProfileHoverCard did={authors[0].profile.did}>
+              <TextLink
+                key={authors[0].href}
+                style={[pal.text, s.bold]}
+                href={authors[0].href}
+                text={forceLTR(firstAuthorName)}
+                disableMismatchWarning
+              />
+            </ProfileHoverCard>
             {authors.length > 1 ? (
               <>
                 <Text style={[pal.text, s.mr5, s.ml5]}>
-                  {' '}
-                  <Trans>and</Trans>{' '}
+                  <Trans>and</Trans>
                 </Text>
                 <Text style={[pal.text, s.bold]}>
                   {plural(authors.length - 1, {
@@ -564,21 +565,23 @@ function ExpandedAuthorsList({
                 />
               </ProfileHoverCard>
             </View>
-            <View style={s.flex1}>
-              <Text
-                type="lg-bold"
-                numberOfLines={1}
-                style={pal.text}
-                lineHeight={1.2}>
-                {sanitizeDisplayName(
-                  author.profile.displayName || author.profile.handle,
-                )}
-                &nbsp;
-                <Text style={[pal.textLight]} lineHeight={1.2}>
-                  {sanitizeHandle(author.profile.handle)}
+            <ProfileHoverCard did={author.profile.did}>
+              <View style={s.flex1}>
+                <Text
+                  type="lg-bold"
+                  numberOfLines={1}
+                  style={pal.text}
+                  lineHeight={1.2}>
+                  {sanitizeDisplayName(
+                    author.profile.displayName || author.profile.handle,
+                  )}
+                  &nbsp;
+                  <Text style={[pal.textLight]} lineHeight={1.2}>
+                    {sanitizeHandle(author.profile.handle)}
+                  </Text>
                 </Text>
-              </Text>
-            </View>
+              </View>
+            </ProfileHoverCard>
           </NewLink>
         ))}
     </Animated.View>
