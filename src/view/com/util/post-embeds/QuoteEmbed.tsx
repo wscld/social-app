@@ -24,15 +24,16 @@ import {useLingui} from '@lingui/react'
 import {useQueryClient} from '@tanstack/react-query'
 
 import {HITSLOP_20} from '#/lib/constants'
+import {usePalette} from '#/lib/hooks/usePalette'
+import {InfoCircleIcon} from '#/lib/icons'
 import {moderatePost_wrapped} from '#/lib/moderatePost_wrapped'
+import {makeProfileLink} from '#/lib/routes/links'
 import {s} from '#/lib/styles'
 import {useModerationOpts} from '#/state/preferences/moderation-opts'
+import {precacheProfile} from '#/state/queries/profile'
+import {useResolveLinkQuery} from '#/state/queries/resolve-link'
 import {useSession} from '#/state/session'
-import {usePalette} from 'lib/hooks/usePalette'
-import {InfoCircleIcon} from 'lib/icons'
-import {makeProfileLink} from 'lib/routes/links'
-import {precacheProfile} from 'state/queries/profile'
-import {ComposerOptsQuote} from 'state/shell/composer'
+import {ComposerOptsQuote} from '#/state/shell/composer'
 import {atoms as a, useTheme} from '#/alf'
 import {RichText} from '#/components/RichText'
 import {ContentHider} from '../../../../components/moderation/ContentHider'
@@ -219,7 +220,14 @@ export function QuoteEmbed({
   return (
     <ContentHider
       modui={moderation?.ui('contentList')}
-      style={[styles.container, a.border, t.atoms.border_contrast_low, style]}
+      style={[
+        a.rounded_md,
+        a.p_md,
+        a.mt_sm,
+        a.border,
+        t.atoms.border_contrast_low,
+        style,
+      ]}
       childContainerStyle={[a.pt_sm]}>
       <Link
         hoverStyle={{borderColor: pal.colors.borderLinkHover}}
@@ -231,7 +239,6 @@ export function QuoteEmbed({
             author={quote.author}
             moderation={moderation}
             showAvatar
-            authorHasWarning={false}
             postHref={itemHref}
             timestamp={quote.indexedAt}
           />
@@ -280,6 +287,24 @@ export function QuoteX({onRemove}: {onRemove: () => void}) {
   )
 }
 
+export function LazyQuoteEmbed({uri}: {uri: string}) {
+  const {data} = useResolveLinkQuery(uri)
+  if (!data || data.type !== 'record' || data.kind !== 'post') {
+    return null
+  }
+  return (
+    <QuoteEmbed
+      quote={{
+        cid: data.record.cid,
+        uri: data.record.uri,
+        author: data.meta.author,
+        indexedAt: data.meta.indexedAt,
+        text: data.meta.text,
+      }}
+    />
+  )
+}
+
 function viewRecordToPostView(
   viewRecord: AppBskyEmbedRecord.ViewRecord,
 ): AppBskyFeedDefs.PostView {
@@ -293,13 +318,6 @@ function viewRecordToPostView(
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 8,
-    marginTop: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
