@@ -306,17 +306,19 @@ let FeedItem = ({
             style={[styles.meta, a.self_start]}
             accessibilityHint=""
             accessibilityLabel={a11yLabel}>
-            <TextLink
-              key={authors[0].href}
-              style={[pal.text, s.bold]}
-              href={authors[0].href}
-              text={
-                <Text emoji style={[pal.text, s.bold]}>
-                  {forceLTR(firstAuthorName)}
-                </Text>
-              }
-              disableMismatchWarning
-            />
+            <ProfileHoverCard did={authors[0].profile.did}>
+              <TextLink
+                key={authors[0].href}
+                style={[pal.text, s.bold]}
+                href={authors[0].href}
+                text={
+                  <Text emoji style={[pal.text, s.bold]}>
+                    {forceLTR(firstAuthorName)}
+                  </Text>
+                }
+                disableMismatchWarning
+              />
+            </ProfileHoverCard>
             {authors.length > 1 ? (
               <>
                 <Text style={[pal.text]}>
@@ -568,22 +570,24 @@ function ExpandedAuthorsList({
                 />
               </ProfileHoverCard>
             </View>
-            <View style={s.flex1}>
-              <Text
-                type="lg-bold"
-                numberOfLines={1}
-                style={pal.text}
-                lineHeight={1.2}>
-                <Text emoji type="lg-bold" style={pal.text} lineHeight={1.2}>
-                  {sanitizeDisplayName(
-                    author.profile.displayName || author.profile.handle,
-                  )}
-                </Text>{' '}
-                <Text style={[pal.textLight]} lineHeight={1.2}>
-                  {sanitizeHandle(author.profile.handle, '@')}
+            <ProfileHoverCard did={author.profile.did}>
+              <View style={s.flex1}>
+                <Text
+                  type="lg-bold"
+                  numberOfLines={1}
+                  style={pal.text}
+                  lineHeight={1.2}>
+                  <Text emoji type="lg-bold" style={pal.text} lineHeight={1.2}>
+                    {sanitizeDisplayName(
+                      author.profile.displayName || author.profile.handle,
+                    )}
+                  </Text>{' '}
+                  <Text style={[pal.textLight]} lineHeight={1.2}>
+                    {sanitizeHandle(author.profile.handle, '@')}
+                  </Text>
                 </Text>
-              </Text>
-            </View>
+              </View>
+            </ProfileHoverCard>
           </NewLink>
         ))}
     </Animated.View>
